@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const passport = require("passport");
 
 const {
 logonShow,
@@ -8,14 +9,25 @@ registerDo,
 logoff
 } = require("../controllers/sessionController");
 
-router.route("/register").get(registerShow).post(registerDo);
+//---register---
+router.route("/register")
+.get(registerShow)
+.post(registerDo);
 
-router.route("/logon")
-.get(logonShow)
-.post((req,res)=>{
-res.send("Not implemented yet");
-});
+//---logon page---
+router.get("/logon", logonShow);
 
-router.route("/logoff").post(logoff);
+//---logon form submission---
+router.post(
+    "/logon",
+    passport.authenticate("local", {
+        successRedirect: "/",
+        failureRedirect: "/sessions/logon",
+        failureFlash: true
+    })
+);
+
+//---logoff---
+router.post("/logoff", logoff);
 
 module.exports = router;

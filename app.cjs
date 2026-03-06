@@ -8,6 +8,9 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 require("express-async-errors");
 
+const passport = require("passport");
+require("./passport/passportInit")(passport);
+
 const app = express();
 
 const Book = require("./models/Book");
@@ -50,6 +53,10 @@ if (app.get("env") === "production") {
 }
 
 app.use(session(sessionParams));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(flash());
 
 // --- Flash messages in views ---
@@ -64,6 +71,7 @@ app.use(require("./middleware/storeLocals"));
 
 // --- Routes ---
 app.use("/sessions", require("./routes/sessionRoutes"));
+app.use("/secretWord", require("./routes/secretRoutes"));
 
 // Home page
 app.get("/", (req, res) => {
@@ -97,7 +105,6 @@ app.post("/books", async (req, res) => {
 
     req.flash("info", "Book added successfully!");
     res.redirect("/books");
-
   } catch (err) {
     req.flash("error", "Something went wrong!");
     res.redirect("/books");
