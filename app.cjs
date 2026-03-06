@@ -71,7 +71,7 @@ app.use(require("./middleware/storeLocals"));
 
 // --- Routes ---
 app.use("/sessions", require("./routes/sessionRoutes"));
-app.use("/secretWord", require("./routes/secretRoutes"));
+app.use("/secretWord", require("./routes/secretWord"));
 
 // Home page
 app.get("/", (req, res) => {
