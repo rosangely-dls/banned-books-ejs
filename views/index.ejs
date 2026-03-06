@@ -1,0 +1,20 @@
+<%- include("partials/head.ejs") %>
+<%- include("partials/header.ejs") %>
+
+<h2>Banned Books Review App</h2>
+
+<% if (user) { %>
+
+<p>Welcome <%= user.name %>!</p>
+
+<a href="/books">View banned books reviews</a>
+
+<% } else { %>
+
+<a href="/sessions/logon">Login</a>
+<br>
+<a href="/sessions/register">Register</a>
+
+<% } %>
+
+<%- include("partials/footer.ejs") %>

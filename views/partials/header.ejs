@@ -1,8 +1,29 @@
 <h1>Banned Books Review App</h1>
-<hr />
-<% if (errors) { errors.forEach(err => { %>
-  <div style="color:red;">Error: <%= err %></div>
-<% }) } %>
-<% if (info) { info.forEach(msg => { %>
-  <div style="color:green;">Info: <%= msg %></div>
-<% }) } %>
+
+<% if (user) { %>
+
+<p>User <%= user.name %> is logged in.</p>
+
+<form method="POST" action="/sessions/logoff">
+<button>Logoff</button>
+</form>
+
+<% } %>
+
+<% if (errors) { %>
+  <% errors.forEach((err)=> { %>
+  <div style="color:red">
+  Error: <%= err %>
+  </div>
+  <% }) %>
+<% } %>
+
+<% if (info) { %>
+  <% info.forEach((msg)=> { %>
+  <div style="color:green">
+  Info: <%= msg %>
+  </div>
+  <% }) %>
+<% } %>
+
+<hr>
