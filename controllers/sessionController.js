@@ -4,36 +4,36 @@ const registerShow = (req, res) => {
   res.render("register");
 };
 
-const registerDo = async (req, res, next) => {
-  try {
+const registerDo = async (req, res) => {
 
-    if (req.body.password !== req.body.password1) {
-      req.flash("error", "Passwords do not match");
-      return res.render("register");
-    }
+  if (req.body.password != req.body.password1) {
+
+    req.flash("error", "Passwords do not match");
+
+    return res.render("register", {
+      errors: req.flash("error")
+    });
+
+  }
+
+  try {
 
     await User.create(req.body);
 
-    req.flash("info", "Registration successful. Please log in.");
-    res.redirect("/sessions/logon");
+    req.flash("info", "Registration successful");
+
+    res.redirect("/");
 
   } catch (err) {
 
-    // Duplicate email error
-    if (err.code === 11000) {
-      req.flash("error", "Email already exists");
-      return res.render("register");
-    }
+    req.flash("error", err.message);
 
-    // Mongoose validation errors
-    if (err.name === "ValidationError") {
-      const messages = Object.values(err.errors).map(e => e.message);
-      messages.forEach(msg => req.flash("error", msg));
-      return res.render("register");
-    }
+    return res.render("register", {
+      errors: req.flash("error")
+    });
 
-    next(err);
   }
+
 };
 
 const logonShow = (req, res) => {

@@ -9,7 +9,7 @@ const bodyParser = require("body-parser");
 require("express-async-errors");
 
 const passport = require("passport");
-require("./passport/passportInit")(passport);
+require("./passport/passportInit")();
 
 const app = express();
 

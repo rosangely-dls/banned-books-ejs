@@ -1,17 +1,36 @@
 const express = require("express");
 const router = express.Router();
 
-function ensureAuth(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
+const ensureAuth = require("../middleware/auth");
+
+// GET secret word page
+router.get("/", ensureAuth, (req, res) => {
+
+  if (!req.session.secretWord) {
+    req.session.secretWord = "Express";
   }
 
-  req.flash("error", "Please log in first.");
-  res.redirect("/sessions/logon");
-}
+  res.render("secretWord", {
+    secretWord: req.session.secretWord
+  });
 
-router.get("/", ensureAuth, (req, res) => {
-  res.send("The secret word is: BANNED");
+});
+
+// POST update secret word
+router.post("/", ensureAuth, (req, res) => {
+
+  const { secretWord } = req.body;
+
+  if (secretWord.startsWith("P")) {
+    req.flash("error", "Secret words starting with P are not allowed!");
+    return res.redirect("/secretWord");
+  }
+
+  req.session.secretWord = secretWord;
+
+  req.flash("info", "Secret word updated!");
+  res.redirect("/secretWord");
+
 });
 
 module.exports = router;
