@@ -2,42 +2,76 @@
 <%- include("partials/header") %>
 
 <h2>Add a Banned Book</h2>
-<form method="POST">
-  <label>Book Title: <input name="title" required /></label><br />
-  <label>Author: <input name="author" required /></label><br />
-  <label>Genre: <input name="genre" /></label><br />
-  <label>Rating (1-5): <input name="rating" type="number" min="1" max="5" /></label><br />
-  <label>Review: <textarea name="review"></textarea></label><br />
-  <label>Banned Reason: <input name="bannedReason" /></label><br />
-  <button>Add Book</button>
+
+<form method="POST" action="/books">
+
+<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+
+<label>Book Title: <input name="title" required /></label><br />
+<label>Author: <input name="author" required /></label><br />
+<label>Genre: <input name="genre" /></label><br />
+<label>Rating (1-5): <input name="rating" type="number" min="1" max="5" /></label><br />
+<label>Review: <textarea name="review"></textarea></label><br />
+<label>Banned Reason: <input name="bannedReason" /></label><br />
+
+<button>Add Book</button>
+
 </form>
 
 <h2>All Banned Books</h2>
+
 <table border="1" cellpadding="5" cellspacing="0">
-  <thead>
-    <tr>
-      <th>Book Title</th>
-      <th>Genre</th>
-      <th>Author</th>
-      <th>Rating</th>
-      <th>Review</th>
-      <th>Banned Reason</th>
-      <th>Created At</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% books.forEach(book => { %>
-    <tr>
-      <td><%= book.title %></td>
-      <td><%= book.genre %></td>
-      <td><%= book.author %></td>
-      <td><%= book.rating %></td>
-      <td><%= book.review %></td>
-      <td><%= book.bannedReason %></td>
-      <td><%= book.createdAt.toLocaleString() %></td>
-    </tr>
-    <% }) %>
-  </tbody>
+
+<thead>
+<tr>
+<th>Book Title</th>
+<th>Genre</th>
+<th>Author</th>
+<th>Rating</th>
+<th>Review</th>
+<th>Banned Reason</th>
+<th>Created At</th>
+<th>Edit</th>
+<th>Delete</th>
+</tr>
+</thead>
+
+<tbody>
+
+<% if (books && books.length) { %>
+
+  <% books.forEach((book) => { %>
+
+<tr>
+<td><%= book.title %></td>
+<td><%= book.genre %></td>
+<td><%= book.author %></td>
+<td><%= book.rating %></td>
+<td><%= book.review %></td>
+<td><%= book.bannedReason %></td>
+<td><%= book.createdAt.toLocaleString() %></td>
+
+<td>
+<a href="/books/edit/<%= book._id %>">
+<button type="button">Edit</button>
+</a>
+</td>
+
+<td>
+<form method="POST" action="/books/delete/<%= book._id %>" style="display:inline">
+<button>Delete</button>
+<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+</form>
+</td>
+
+</tr>
+
+  <% }) %>
+
+<% } %>
+
+</tbody>
+
 </table>
 
 <%- include("partials/footer") %>
