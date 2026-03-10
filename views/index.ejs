@@ -1,7 +1,29 @@
 <%- include("partials/head.ejs") %>
 <%- include("partials/header.ejs") %>
 
-<h2>Banned Books Review App</h2>
+<h2>Your Banned Books App</h2>
+
+<p class="subtitle">Track, review, and explore books that have been challenged or banned.</p>
+
+<div class="dashboard">
+    <div class="card">
+        <h3>About This App</h3>
+        <p>This app helps readers document and reflect on books that have been banned or challenged. Build your own collection and record why these stories matter.</p>
+    </div>
+    <div class="card">
+        📚
+        <h3>Add a Book</h3>
+        <p>Record a banned or challenged book and your thoughts.</p>
+        <a href="/books#add-book"><button>Add Book</button></a>
+    </div>
+
+    <div class="card">
+        📖
+        <h3>View Your Collection</h3>
+        <p>See all the books you have added and review them.</p>
+        <a href="/books"><button>View Books</button></a>
+    </div>
+</div>
 
 <% if (user) { %>
 
