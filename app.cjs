@@ -36,8 +36,6 @@ const limiter = rateLimit({
 
 app.use(limiter);
 
-const Book = require("./models/Book");
-
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
@@ -111,92 +109,11 @@ app.use(require("./middleware/storeLocals"));
 
 // --- Routes ---
 app.use("/sessions", require("./routes/sessionRoutes"));
+app.use("/books", require("./routes/books"));
 
 // Home page
 app.get("/", (req, res) => {
   res.render("index");
-});
-
-// --- GET /books ---
-app.get("/books", isAuthenticated, async (req, res) => {
-  const books = await Book.find({ createdBy: req.user._id });
-  res.render("books", { books });
-});
-
-// --- POST /books ---
-app.post("/books", async (req, res) => {
-  try {
-    const { title, author, genre, rating, review, bannedReason } = req.body;
-
-    if (!title || !author) {
-      req.flash("error", "Book Title and Author are required!");
-      return res.redirect("/books");
-    }
-
-    await Book.create({
-      title,
-      author,
-      genre,
-      rating,
-      review,
-      bannedReason,
-      createdBy: req.user._id,
-    });
-
-    req.flash("info", "Book added successfully!");
-    res.redirect("/books");
-  } catch (err) {
-    req.flash("error", "Something went wrong!");
-    res.redirect("/books");
-  }
-});
-
-// --- GET edit book ---
-app.get("/books/edit/:id", isAuthenticated, async (req, res) => {
-  const books = await Book.findOne({
-    _id: req.params.id,
-    createdBy: req.user._id,
-  });
-
-  if (!books) {
-    req.flash("error", "Book not found.");
-    return res.redirect("/books");
-  }
-
-  res.render("books", { books });
-});
-
-// --- POST update book ---
-app.post("/books/update/:id", isAuthenticated, async (req, res) => {
-  const { title, author, genre, rating, review, bannedReason } = req.body;
-
-  await Book.findByIdAndUpdate(
-    { _id: req.params.id, createdBy: req.user._id },
-    {
-      title,
-      author,
-      genre,
-      rating,
-      review,
-      bannedReason,
-    },
-  );
-
-  req.flash("info", "Book updated!");
-
-  res.redirect("/books");
-});
-
-// --- POST delete book ---
-app.post("/books/delete/:id", isAuthenticated, async (req, res) => {
-  await Book.findByIdAndDelete({
-    _id: req.params.id,
-    createdBy: req.user._id,
-  });
-
-  req.flash("info", "Book deleted!");
-
-  res.redirect("/books");
 });
 
 // --- 404 ---
@@ -207,7 +124,7 @@ app.use((req, res) => {
 // --- Error handler ---
 app.use((err, req, res, next) => {
   console.log(err);
-  res.status(500).send(err.message);
+  res.status(500).send("Something went wrong.");
 });
 
 // --- Start server ---

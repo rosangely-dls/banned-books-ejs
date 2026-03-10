@@ -4,8 +4,9 @@
 
 <p>User <%= user.name %> is logged in.</p>
 
-<form method="POST" action="/sessions/logoff">
-<button>Logoff</button>
+<form method="POST" action="/sessions/logoff" style="display:inline;">
+  <input type="hidden" name="_csrf" value="<%= _csrf %>">
+  <button type="submit">Logout</button>
 </form>
 
 <% } %>
