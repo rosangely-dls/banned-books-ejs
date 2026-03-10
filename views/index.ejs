@@ -1,7 +1,25 @@
 <%- include("partials/head.ejs") %>
 <%- include("partials/header.ejs") %>
 
-<h2>Your Banned Books App</h2>
+<!-- Flash Messages -->
+
+<% if (errors) { %>
+  <% errors.forEach((err)=> { %>
+    <div class="error">
+      <%= err %>
+    </div>
+  <% }) %>
+<% } %>
+
+<% if (info) { %>
+  <% info.forEach((msg)=> { %>
+    <div class="info">
+      <%= msg %>
+    </div>
+  <% }) %>
+<% } %>
+
+<h2>Your Library Dashboard</h2>
 
 <p class="subtitle">Track, review, and explore books that have been challenged or banned.</p>
 
@@ -25,18 +43,5 @@
     </div>
 </div>
 
-<% if (user) { %>
-
-<p>Welcome <%= user.name %>!</p>
-
-<a href="/books">View banned books reviews</a>
-
-<% } else { %>
-
-<a href="/sessions/logon">Login</a>
-<br>
-<a href="/sessions/register">Register</a>
-
-<% } %>
 
 <%- include("partials/footer.ejs") %>

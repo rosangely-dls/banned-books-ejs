@@ -10,30 +10,27 @@
 
 <% if (user) { %>
 
-<p>User <%= user.name %> is logged in.</p>
+  <a href="/books">My Books</a>
+
+<span class="user-info">Hello, <%= user.name %></span>
 
 <form method="POST" action="/sessions/logoff" style="display:inline;">
   <input type="hidden" name="_csrf" value="<%= _csrf %>">
-  <button type="submit">Logout</button>
+  <button type="submit" class="logout-btn">Logout</button>
 </form>
 
+<% } else { %>
+
+<a href="/sessions/logon">Login</a>
+<a href="/sessions/register">Register</a>
+
 <% } %>
 
-<% if (errors) { %>
-  <% errors.forEach((err)=> { %>
-  <div style="color:red">
-  Error: <%= err %>
-  </div>
-  <% }) %>
-<% } %>
+</div>
 
-<% if (info) { %>
-  <% info.forEach((msg)=> { %>
-  <div style="color:green">
-  Info: <%= msg %>
-  </div>
-  <% }) %>
-<% } %>
-
- </div>
 </header>
+
+
+
+
+
