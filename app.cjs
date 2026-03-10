@@ -1,6 +1,14 @@
 require("dotenv").config();
 
 const express = require("express");
+
+// --- Security imports ---
+const cookieParser = require("cookie-parser");
+const csrf = require("csurf");
+const helmet = require("helmet");
+const xss = require("xss-clean");
+const rateLimit = require("express-rate-limit");
+
 const session = require("express-session");
 const flash = require("connect-flash");
 const MongoDBStore = require("connect-mongodb-session")(session);
@@ -13,13 +21,35 @@ require("./passport/passportInit")();
 
 const app = express();
 
-const Book = require("./models/Book");
+// --- Security middleware ---
+app.use(cookieParser(process.env.SESSION_SECRET));
+
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(helmet());
+app.use(xss());
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
+
+app.use(limiter);
+
+function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+
+  req.flash("error", "You must log in first.");
+  res.redirect("/");
+}
 
 // --- View Engine ---
 app.set("view engine", "ejs");
 
 // --- Middleware ---
-app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(express.static("public"));
 
 // --- MongoDB connection ---
@@ -54,6 +84,14 @@ if (app.get("env") === "production") {
 
 app.use(session(sessionParams));
 
+// --- CSRF protection ---
+app.use(csrf());
+
+app.use((req, res, next) => {
+  res.locals._csrf = req.csrfToken();
+  next();
+});
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -71,44 +109,11 @@ app.use(require("./middleware/storeLocals"));
 
 // --- Routes ---
 app.use("/sessions", require("./routes/sessionRoutes"));
-app.use("/secretWord", require("./routes/secretWord"));
+app.use("/books", require("./routes/books"));
 
 // Home page
 app.get("/", (req, res) => {
   res.render("index");
-});
-
-// --- GET /books ---
-app.get("/books", async (req, res) => {
-  const books = await Book.find();
-  res.render("books", { books });
-});
-
-// --- POST /books ---
-app.post("/books", async (req, res) => {
-  try {
-    const { title, author, genre, rating, review, bannedReason } = req.body;
-
-    if (!title || !author) {
-      req.flash("error", "Book Title and Author are required!");
-      return res.redirect("/books");
-    }
-
-    await Book.create({
-      title,
-      author,
-      genre,
-      rating,
-      review,
-      bannedReason,
-    });
-
-    req.flash("info", "Book added successfully!");
-    res.redirect("/books");
-  } catch (err) {
-    req.flash("error", "Something went wrong!");
-    res.redirect("/books");
-  }
 });
 
 // --- 404 ---
@@ -119,7 +124,7 @@ app.use((req, res) => {
 // --- Error handler ---
 app.use((err, req, res, next) => {
   console.log(err);
-  res.status(500).send(err.message);
+  res.status(500).send("Something went wrong.");
 });
 
 // --- Start server ---

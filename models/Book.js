@@ -8,6 +8,13 @@ const BookSchema = new mongoose.Schema({
   rating: { type: Number, min: 1, max: 5 },
   review: String,
   bannedReason: String,
+
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  }
+  
 }, { timestamps: true});
 
 module.exports = mongoose.model("Book", BookSchema);

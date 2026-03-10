@@ -45,12 +45,14 @@ const logonShow = (req, res) => {
   res.render("logon");
 };
 
+
+
 const logoff = (req, res) => {
-
-  req.session.destroy(() => {
-    res.redirect("/");
+  req.logout(() => {
+    req.session.destroy(() => {
+      res.redirect("/sessions/logon");
+    });
   });
-
 };
 
 module.exports = {
