@@ -52,15 +52,25 @@ app.set("view engine", "ejs");
 
 app.use(express.static("public"));
 
+// ---MongoDB URL Logic (testing)--- 
+let mongoURL = process.env.MONGO_URI;
+
+  if (process.env.NODE_ENV === "test") {
+    mongoURL = process.env.MONGO_URI_TEST
+  }
+
+
 // --- MongoDB connection ---
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(mongoURL)
   .then(() => console.log("MongoDB connected!"))
   .catch((err) => console.log(err));
 
+
+
 // --- Session store ---
 const store = new MongoDBStore({
-  uri: process.env.MONGO_URI,
+  uri: mongoURL,
   collection: "sessions",
 });
 
@@ -133,3 +143,5 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+module.exports = { app };
