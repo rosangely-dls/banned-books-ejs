@@ -1,4 +1,4 @@
-const multiply = require("../util/multiply")
+const multiply = require("../utils/multiply")
 const { expect } = require("chai");
 
 describe("Multiply function", () => {
